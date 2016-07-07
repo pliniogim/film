@@ -49,6 +49,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ImageView imageView = (ImageView) findViewById(R.id.image_view);
-        Picasso.with(this).load("http://i.imgur.com/DvpvklR.png").into(imageView);
+        Picasso.with(this).load("http://image.tmdb.org/t/p/w185/811DjJTon9gD6hZ8nCjSitaIXFQ.jpg").into(imageView);
     }
 }
