@@ -8,12 +8,31 @@
     tools:context="com.dlinkddns.pliniolgimenez.filmes.MainActivity">
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="@+id/activity_main"
         app:layout_constraintLeft_toLeftOf="@+id/activity_main"
         app:layout_constraintRight_toRightOf="@+id/activity_main"
         app:layout_constraintTop_toTopOf="@+id/activity_main" />
+
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="173dp"
+        android:layout_height="127dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="Teste"
+        app:layout_constraintLeft_toLeftOf="@+id/activity_main"
+        app:layout_constraintRight_toRightOf="@+id/activity_main"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
 </android.support.constraint.ConstraintLayout>
