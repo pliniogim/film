@@ -25,9 +25,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-public class MainActivity extends AppCompatActivity {
 
-    private final String LOG_TAG = MainActivity.class.getSimpleName();
+public class MainActivity extends AppCompatActivity {
 
     /**
      * Constantes da API tmdb
@@ -36,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String urlApi = "https://api.themoviedb.org/3/";
     public static final String apiKey = BuildConfig.TMDB_API_KEY;
     public static final String urlThumbnail = "https://image.tmdb.org/t/p/";
+    private final String LOG_TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.tmdbcontainer, new tmdbFragment())
+                    .add(R.id.tmdbcontainer, new TMDBFragment())
                     .commit();
         }
     }
