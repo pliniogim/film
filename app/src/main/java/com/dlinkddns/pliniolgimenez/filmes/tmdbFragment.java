@@ -1,6 +1,7 @@
 package com.dlinkddns.pliniolgimenez.filmes;
 
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.GridView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,7 +31,11 @@ import java.util.ArrayList;
  */
 public class tmdbFragment extends Fragment {
 
+    private View rootView;
+    private GridView gridview;
+
     private ArrayAdapter<String> mtmdbAdapter;
+
 
     public tmdbFragment() {
         // construtor publico obrigatorio
@@ -41,6 +46,7 @@ public class tmdbFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+
         /**
          * adaptador matriz preenche os dados da listview
          * ao qual esta conectado
@@ -48,23 +54,29 @@ public class tmdbFragment extends Fragment {
         mtmdbAdapter = new ArrayAdapter<String>(
                 getActivity(),                  // contexto corrente
                 R.layout.list_item_tmdb,        // ID do layout
-                R.id.list_item_tmdb_textview,   // ID do TextID para popular
+                R.id.list_item_tmdb_imageview,   // ID do TextID para popular
                 new ArrayList<String>());
+
 
         /**
          * armazena a vista para melhorar pesquisa a partir de rootView
          */
-        View rootView = inflater.inflate(R.layout.fragment_tmdb, container, false);
+        rootView = inflater.inflate(R.layout.fragment_tmdb, container, false);
+
+        Context c = getActivity();
+        gridview = (GridView) rootView.findViewById(R.id.gridview);
+        //gridview.setAdapter(new ImageAdapter(c));
 
         /**
          * pega referencia da listView
          */
-        ListView listView = (ListView) rootView.findViewById(R.id.listview_tmdb);
+        //GridView gridView = (GridView) rootView.findViewById(R.id.gridview_tmdb);
 
         /**
          * seta o adaptador para a vista
          */
-        listView.setAdapter(mtmdbAdapter);
+        //gridView.setAdapter(mtmdbAdapter);
+
 
         /**
          * retorna a vista
@@ -96,6 +108,7 @@ public class tmdbFragment extends Fragment {
         FetchTMDB TMDBTask = new FetchTMDB();
         TMDBTask.execute("teste");
     }
+
 
     public class FetchTMDB extends AsyncTask<String, Void, String[]> {
         private final String LOG_TAG = FetchTMDB.class.getSimpleName();
@@ -194,14 +207,11 @@ public class tmdbFragment extends Fragment {
 
 
         @Override
-        protected void onPostExecute(String... strings) {
+        protected void onPostExecute(String[] strings) {
             if (strings != null) {
-                mtmdbAdapter.clear();
-                for (String resultStr : strings) {
-                    String[] parts = resultStr.split(":");
-                    mtmdbAdapter.add(parts[0]);
-
-                }
+                Context context;
+                context = getActivity();
+                gridview.setAdapter(new ImageAdapter(context, strings));
             }
         }
 
@@ -237,7 +247,7 @@ public class tmdbFragment extends Fragment {
 
                 poster_path = films.getString(TMDB_POSTER_PATH);
                 title = films.getString(TMDB_TITLE);
-                resultado[i] = title+":"+poster_path;
+                resultado[i] = poster_path;
 
             }
             return resultado;
