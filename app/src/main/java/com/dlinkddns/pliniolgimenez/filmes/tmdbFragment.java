@@ -1,15 +1,17 @@
 package com.dlinkddns.pliniolgimenez.filmes;
 
-
-import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
@@ -23,7 +25,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
 
 /**
@@ -33,6 +34,8 @@ public class tmdbFragment extends Fragment {
 
     private View rootView;
     private GridView gridview;
+    private String orderList;
+    private String[] decodedStr;
 
     private ArrayAdapter<String> mtmdbAdapter;
 
@@ -47,66 +50,34 @@ public class tmdbFragment extends Fragment {
                              Bundle savedInstanceState) {
 
 
-        /**
-         * adaptador matriz preenche os dados da listview
-         * ao qual esta conectado
-         */
-        mtmdbAdapter = new ArrayAdapter<String>(
-                getActivity(),                  // contexto corrente
-                R.layout.list_item_tmdb,        // ID do layout
-                R.id.list_item_tmdb_imageview,   // ID do TextID para popular
-                new ArrayList<String>());
-
-
-        /**
-         * armazena a vista para melhorar pesquisa a partir de rootView
-         */
+        //armazena a vista para melhorar pesquisa a partir de rootView
         rootView = inflater.inflate(R.layout.fragment_tmdb, container, false);
-
-        Context c = getActivity();
         gridview = (GridView) rootView.findViewById(R.id.gridview);
-        //gridview.setAdapter(new ImageAdapter(c));
 
-        /**
-         * pega referencia da listView
-         */
-        //GridView gridView = (GridView) rootView.findViewById(R.id.gridview_tmdb);
-
-        /**
-         * seta o adaptador para a vista
-         */
-        //gridView.setAdapter(mtmdbAdapter);
-
-
-        /**
-         * retorna a vista
-         */
+        //retorna a vista
         return rootView;
+
     }
+
 
     @Override
     public void onStart() {
-        /**
-         * chama supermetodo
-         */
+        //chama supermetodo
         super.onStart();
 
-        /**
-         * chama metodo para pegar os dados da api TMDB via HTTP
-         */
+        //chama metodo para pegar os dados da api TMDB via HTTP
         updateTMDB();
     }
 
 
-    /**
-     *
-     */
     private void updateTMDB() {
-        /**
-         * classe para alimentar o listView Adapter
-         */
+
+        //classe para alimentar o listView Adapter
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        orderList = prefs.getString(getString(R.string.pref_initial_key), getString(R.string.pref_initial_popular));
+
         FetchTMDB TMDBTask = new FetchTMDB();
-        TMDBTask.execute("teste");
+        TMDBTask.execute(orderList);
     }
 
 
@@ -142,8 +113,16 @@ public class tmdbFragment extends Fragment {
                 final String TMDBurlApiTopRated = "https://api.themoviedb.org/3/movie/top_rated?";
                 final String APPID_PARAM = "api_key";
 
+                //ordem da lista (popular ou rated)
+                String baseUrl;
+                if (params[0].equals(getString(R.string.popular))) {
+                    baseUrl = TMDBurlApiPopular;
+                } else {
+                    baseUrl = TMDBurlApiTopRated;
+                }
+
                 //cria a URL
-                Uri builtUri = Uri.parse(TMDBurlApiPopular).buildUpon()
+                Uri builtUri = Uri.parse(baseUrl).buildUpon()
                         .appendQueryParameter(APPID_PARAM, BuildConfig.TMDB_API_KEY)
                         .build();
 
@@ -195,7 +174,8 @@ public class tmdbFragment extends Fragment {
 
             try {
                 Log.d(LOG_TAG, tmdb_json_str);
-                return getTMDBDataFromJson(tmdb_json_str);
+                decodedStr = getTMDBDataFromJson(tmdb_json_str);
+                return decodedStr;
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
@@ -209,15 +189,20 @@ public class tmdbFragment extends Fragment {
         @Override
         protected void onPostExecute(String[] strings) {
             if (strings != null) {
-                Context context;
-                context = getActivity();
-                gridview.setAdapter(new ImageAdapter(context, strings));
+                gridview.setAdapter(new ImageAdapter(getActivity(), strings));
+                gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                                            int position, long id) {
+                        Intent intent = new Intent(getActivity(), DetailActivity.class);
+                        startActivity(intent);
+                    }
+                });
             }
         }
 
 
         /**
-         *
          * @param params
          * @return
          * @throws JSONException
