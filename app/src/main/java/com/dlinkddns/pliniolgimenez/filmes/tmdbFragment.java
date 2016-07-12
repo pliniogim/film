@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
 import org.json.JSONArray;
@@ -32,18 +31,50 @@ import java.net.URL;
  */
 public class tmdbFragment extends Fragment {
 
-    private View rootView;
+    //Total de respostas JSON
+    private final static int RESPONSE_TOTAL = 20;
+
+    //acesso às variaveis ja decodificadas no JSON
+    private static String[] filmThumbnailUrl = new String[RESPONSE_TOTAL];
+    private static String[] filmTitle = new String[RESPONSE_TOTAL];
+    private static String[] filmOverview = new String[RESPONSE_TOTAL];
+    private static String[] filmAdult = new String[RESPONSE_TOTAL];
+    private static String[] filmPopularity = new String[RESPONSE_TOTAL];
+    private static String[] filmVotes = new String[RESPONSE_TOTAL];
+    private static String[] filmVotesAvg = new String[RESPONSE_TOTAL];
     private GridView gridview;
-    private String orderList;
-    private String[] decodedStr;
 
-    private ArrayAdapter<String> mtmdbAdapter;
-
-
+    // construtor publico obrigatorio
     public tmdbFragment() {
-        // construtor publico obrigatorio
     }
 
+    static String getFilmTitle(int indice) {
+        return filmTitle[indice];
+    }
+
+    static String getFilmOverview(int indice) {
+        return filmOverview[indice];
+    }
+
+    static String getFilmThumbnailUrl(int indice) {
+        return filmThumbnailUrl[indice];
+    }
+
+    static String getFilmAdult(int indice) {
+        return filmAdult[indice];
+    }
+
+    static String getFilmPopularity(int indice) {
+        return filmPopularity[indice];
+    }
+
+    static String getFilmVotes(int indice) {
+        return filmVotes[indice];
+    }
+
+    static String getFilmVotesAvg(int indice) {
+        return filmVotesAvg[indice];
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,12 +82,10 @@ public class tmdbFragment extends Fragment {
 
 
         //armazena a vista para melhorar pesquisa a partir de rootView
-        rootView = inflater.inflate(R.layout.fragment_tmdb, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_tmdb, container, false);
         gridview = (GridView) rootView.findViewById(R.id.gridview);
-
         //retorna a vista
         return rootView;
-
     }
 
 
@@ -64,9 +93,37 @@ public class tmdbFragment extends Fragment {
     public void onStart() {
         //chama supermetodo
         super.onStart();
+        boolean empty = true;
 
-        //chama metodo para pegar os dados da api TMDB via HTTP
-        updateTMDB();
+        try {
+            for (int i = 0; i < RESPONSE_TOTAL; i++) {
+                if (!(filmThumbnailUrl[i].equals(null))) {
+                    empty = false;
+                    break;
+                }
+            }
+        } catch (NullPointerException exception) {
+
+        }
+
+        if (empty) {
+            updateTMDB();
+        } else {
+
+            //TODO verificar quando muda a ordem de preferencia
+
+            gridview.setAdapter(new ImageAdapter(getActivity(), filmThumbnailUrl));
+            gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+                    String indice = String.valueOf(position);
+                    Intent intent = new Intent(getActivity(), DetailActivity.class)
+                            .putExtra(Intent.EXTRA_TEXT, indice);
+                    startActivity(intent);
+                }
+            });
+        }
     }
 
 
@@ -74,9 +131,10 @@ public class tmdbFragment extends Fragment {
 
         //classe para alimentar o listView Adapter
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        orderList = prefs.getString(getString(R.string.pref_initial_key), getString(R.string.pref_initial_popular));
+        String orderList = prefs.getString(getString(R.string.pref_initial_key), getString(R.string.pref_initial_popular));
 
         FetchTMDB TMDBTask = new FetchTMDB();
+
         TMDBTask.execute(orderList);
     }
 
@@ -174,7 +232,7 @@ public class tmdbFragment extends Fragment {
 
             try {
                 Log.d(LOG_TAG, tmdb_json_str);
-                decodedStr = getTMDBDataFromJson(tmdb_json_str);
+                String[] decodedStr = getTMDBDataFromJson(tmdb_json_str);
                 return decodedStr;
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
@@ -194,7 +252,9 @@ public class tmdbFragment extends Fragment {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view,
                                             int position, long id) {
-                        Intent intent = new Intent(getActivity(), DetailActivity.class);
+                        String indice = String.valueOf(position);
+                        Intent intent = new Intent(getActivity(), DetailActivity.class)
+                                .putExtra(Intent.EXTRA_TEXT, indice);
                         startActivity(intent);
                     }
                 });
@@ -215,6 +275,12 @@ public class tmdbFragment extends Fragment {
             final String TMDB_RESULT = "results";
             final String TMDB_POSTER_PATH = "poster_path";
             final String TMDB_TITLE = "title";
+            final String TMDB_OVERVIEW = "overview";
+            final String TMDB_ADULT = "adult";
+            final String TMDB_POPULARITY = "popularity";
+            final String TMDB_VOTES = "vote_count";
+            final String TMDB_VOTESAVG = "vote_average";
+
 
             //pega a lista de resultados e coloca em um array
             JSONObject tmdb_json = new JSONObject(params);
@@ -226,17 +292,34 @@ public class tmdbFragment extends Fragment {
 
             String poster_path;
             String title;
+            String overview;
+            String adult;
+            String popularity;
+            String votes;
+            String votesAvg;
+
 
             for (int i = 0; i < filmsArray.length(); i++) {
                 JSONObject films = filmsArray.getJSONObject(i);
 
                 poster_path = films.getString(TMDB_POSTER_PATH);
                 title = films.getString(TMDB_TITLE);
-                resultado[i] = poster_path;
+                overview = films.getString(TMDB_OVERVIEW);
+                adult = films.getString(TMDB_ADULT);
+                popularity = films.getString(TMDB_POPULARITY);
+                votes = films.getString(TMDB_VOTES);
+                votesAvg = films.getString(TMDB_VOTESAVG);
 
+                //para acesso pelas outras classes
+                filmTitle[i] = title;
+                filmThumbnailUrl[i] = poster_path;
+                filmOverview[i] = overview;
+                filmAdult[i] = adult;
+                filmPopularity[i] = popularity;
+                filmVotes[i] = votes;
+                filmVotesAvg[i] = votesAvg;
             }
-            return resultado;
-
+            return filmThumbnailUrl;
         }
     }
 }

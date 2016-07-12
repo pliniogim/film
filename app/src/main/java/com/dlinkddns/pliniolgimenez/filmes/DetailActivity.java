@@ -19,6 +19,7 @@ import android.widget.Toast;
  * Created by plinio on 11/07/2016.
  */
 public class DetailActivity extends AppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,9 +52,16 @@ public class DetailActivity extends AppCompatActivity {
             Intent intent = getActivity().getIntent();
 
             if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
-                String forecastStr = intent.getStringExtra(Intent.EXTRA_TEXT);
+                String indiceStr = intent.getStringExtra(Intent.EXTRA_TEXT);
+                int indice = Integer.parseInt(indiceStr);
                 ((TextView) rootView.findViewById(R.id.detail_activity_textview))
-                        .setText(forecastStr);
+                        .setText(tmdbFragment.getFilmTitle(indice) +
+                                " - " + tmdbFragment.getFilmThumbnailUrl(indice) +
+                                " - " + tmdbFragment.getFilmAdult(indice) +
+                                " - " + tmdbFragment.getFilmOverview(indice) +
+                                " - " + tmdbFragment.getFilmPopularity(indice) +
+                                " - " + tmdbFragment.getFilmVotes(indice) +
+                                " - " + tmdbFragment.getFilmVotesAvg(indice));
             }
             return rootView;
         }
