@@ -13,6 +13,7 @@ import com.squareup.picasso.Picasso;
 class ImageAdapter extends BaseAdapter {
 
     private final static String thumbsUrl = "http://image.tmdb.org/t/p/w185";
+    ImageView imageView;
     private Context mContext;
     private String[] mresultado;
     //referencias das imagens
@@ -46,13 +47,18 @@ class ImageAdapter extends BaseAdapter {
         return 0;
     }
 
+    public View getIndView(int position) {
+        return (View) this.imageView.findViewById(1300 + position);
+    }
+
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView imageView;
+
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            imageView.setId(1300 + position);
             imageView.setPadding(4, 2, 4, 2);
         } else {
             imageView = (ImageView) convertView;
@@ -69,13 +75,20 @@ class ImageAdapter extends BaseAdapter {
         //        .into(item.drawableId);
         //imageView.setImageResource(mThumbIds[position]);
 
+        //checa se existe em disco
+
+        //se existe em disco, carrega imagem de disco
+
+        //senao carrega imagem do site
+
         Picasso
                 .with(mContext)
                 .load(thumbsUrl + mresultado[position])
                 .resize(width / 2, width * 2 / 3)
                 .error(R.drawable.sample1)
                 .into(imageView);
-
         return imageView;
+
     }
+
 }

@@ -2,9 +2,11 @@ package com.dlinkddns.pliniolgimenez.filmes;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -19,6 +21,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,6 +39,11 @@ public class tmdbFragment extends Fragment {
     //Total de respostas JSON
     private final static int RESPONSE_TOTAL = 20;
 
+    //booleano para controle de conteúdo http válido
+    private static boolean valid_http_data = false;
+
+    //booleano para controle de troca da ordem da lista
+    private static String old_list_order = "";
     //acesso às variaveis ja decodificadas no JSON
     private static String[] filmThumbnailUrl = new String[RESPONSE_TOTAL];
     private static String[] filmTitle = new String[RESPONSE_TOTAL];
@@ -42,6 +52,8 @@ public class tmdbFragment extends Fragment {
     private static String[] filmPopularity = new String[RESPONSE_TOTAL];
     private static String[] filmVotes = new String[RESPONSE_TOTAL];
     private static String[] filmVotesAvg = new String[RESPONSE_TOTAL];
+    View rootView;
+    private ImageAdapter mAdapter;
     private GridView gridview;
 
     // construtor publico obrigatorio
@@ -82,7 +94,7 @@ public class tmdbFragment extends Fragment {
 
 
         //armazena a vista para melhorar pesquisa a partir de rootView
-        View rootView = inflater.inflate(R.layout.fragment_tmdb, container, false);
+        rootView = inflater.inflate(R.layout.fragment_tmdb, container, false);
         gridview = (GridView) rootView.findViewById(R.id.gridview);
         //retorna a vista
         return rootView;
@@ -93,53 +105,109 @@ public class tmdbFragment extends Fragment {
     public void onStart() {
         //chama supermetodo
         super.onStart();
-        boolean empty = true;
 
-        try {
-            for (int i = 0; i < RESPONSE_TOTAL; i++) {
-                if (!(filmThumbnailUrl[i].equals(null))) {
-                    empty = false;
-                    break;
-                }
-            }
-        } catch (NullPointerException exception) {
-
-        }
-
-        if (empty) {
-            updateTMDB();
-        } else {
-
-            //TODO verificar quando muda a ordem de preferencia
-
-            gridview.setAdapter(new ImageAdapter(getActivity(), filmThumbnailUrl));
-            gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view,
-                                        int position, long id) {
-                    String indice = String.valueOf(position);
-                    Intent intent = new Intent(getActivity(), DetailActivity.class)
-                            .putExtra(Intent.EXTRA_TEXT, indice);
-                    startActivity(intent);
-                }
-            });
-        }
-    }
-
-
-    private void updateTMDB() {
-
-        //classe para alimentar o listView Adapter
+        //pega a preferencia
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String orderList = prefs.getString(getString(R.string.pref_initial_key), getString(R.string.pref_initial_popular));
 
-        FetchTMDB TMDBTask = new FetchTMDB();
+        //classe para alimentar o listView Adapter
+        if (old_list_order.equals(orderList)) {
+            if (valid_http_data) {
+                mAdapter = new ImageAdapter(getActivity(), filmThumbnailUrl);
+                gridview.setAdapter(mAdapter);
+                gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                                            int position, long id) {
+                        String indice = String.valueOf(position);
+                        Intent intent = new Intent(getActivity(), DetailActivity.class)
+                                .putExtra(Intent.EXTRA_TEXT, indice);
+                        startActivity(intent);
+                    }
+                });
 
+
+            } else {
+                updateTMDB(orderList);
+            }
+        } else {
+            old_list_order = orderList;
+            updateTMDB(orderList);
+        }
+        //grava em disco
+        //for (int i = 0; i < RESPONSE_TOTAL; i++) {
+
+        //    ImageView selImage = (ImageView) mAdapter.getIndView(1300+i);
+        //    Bitmap bm = ((BitmapDrawable) selImage.getDrawable()).getBitmap();
+        //    saveImageFile(bm, i);
+        //}
+    }
+
+    //Code StackOverFlow by Clairvoyant
+    private String saveImageFile(Bitmap bitmap, int position) {
+        FileOutputStream out = null;
+        String filename = getFilename(position);
+        try {
+            out = new FileOutputStream(filename);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return filename;
+    }
+
+    private String getFilename(int position) {
+        File file = new File(Environment.getExternalStorageDirectory()
+                .getPath(), "filmsFolder");
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        String uriSting = (file.getAbsolutePath() + filmThumbnailUrl[position] + ".jpg");
+        return uriSting;
+    }
+
+
+    @Override
+    public void onResume() {
+
+        super.onResume();
+        //pega a preferencia
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String orderList = prefs.getString(getString(R.string.pref_initial_key), getString(R.string.pref_initial_popular));
+
+        //classe para alimentar o listView Adapter
+        if (old_list_order.equals(orderList)) {
+            if (valid_http_data) {
+                gridview.setAdapter(new ImageAdapter(getActivity(), filmThumbnailUrl));
+                gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                                            int position, long id) {
+                        String indice = String.valueOf(position);
+                        Intent intent = new Intent(getActivity(), DetailActivity.class)
+                                .putExtra(Intent.EXTRA_TEXT, indice);
+                        startActivity(intent);
+                    }
+                });
+
+
+            } else {
+                updateTMDB(orderList);
+            }
+        } else {
+            old_list_order = orderList;
+            updateTMDB(orderList);
+        }
+
+    }
+
+    private void updateTMDB(String orderList) {
+        FetchTMDB TMDBTask = new FetchTMDB();
         TMDBTask.execute(orderList);
     }
 
 
-    public class FetchTMDB extends AsyncTask<String, Void, String[]> {
+    private class FetchTMDB extends AsyncTask<String, Void, String[]> {
         private final String LOG_TAG = FetchTMDB.class.getSimpleName();
 
         @Override
@@ -164,9 +232,11 @@ public class tmdbFragment extends Fragment {
                  * Constantes da API tmdb
                  * Chave de acesso à api deve ser colocada no arquivo gradle.properties
                  */
-                final String TMDBurlApi = "https://api.themoviedb.org/3/";
-                final String apiKey = BuildConfig.TMDB_API_KEY;
-                final String urlThumbnail = "https://image.tmdb.org/t/p/";
+
+                //final String TMDBurlApi = "https://api.themoviedb.org/3/";
+                //final String apiKey = BuildConfig.TMDB_API_KEY;
+                //final String urlThumbnail = "https://image.tmdb.org/t/p/";
+
                 final String TMDBurlApiPopular = "https://api.themoviedb.org/3/movie/popular?";
                 final String TMDBurlApiTopRated = "https://api.themoviedb.org/3/movie/top_rated?";
                 final String APPID_PARAM = "api_key";
@@ -186,7 +256,7 @@ public class tmdbFragment extends Fragment {
 
                 URL url = new URL(builtUri.toString());
 
-                // cria a requisição com o site tmdb
+                // cria a requisicao com o site tmdb
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
@@ -232,8 +302,7 @@ public class tmdbFragment extends Fragment {
 
             try {
                 Log.d(LOG_TAG, tmdb_json_str);
-                String[] decodedStr = getTMDBDataFromJson(tmdb_json_str);
-                return decodedStr;
+                return getTMDBDataFromJson(tmdb_json_str);
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
@@ -247,6 +316,7 @@ public class tmdbFragment extends Fragment {
         @Override
         protected void onPostExecute(String[] strings) {
             if (strings != null) {
+                valid_http_data = true;
                 gridview.setAdapter(new ImageAdapter(getActivity(), strings));
                 gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
@@ -262,11 +332,6 @@ public class tmdbFragment extends Fragment {
         }
 
 
-        /**
-         * @param params
-         * @return
-         * @throws JSONException
-         */
         private String[] getTMDBDataFromJson(String params) throws JSONException {
 
             Log.i(LOG_TAG, "Dentro da rotina getTMDBDataFromJson");
@@ -285,10 +350,6 @@ public class tmdbFragment extends Fragment {
             //pega a lista de resultados e coloca em um array
             JSONObject tmdb_json = new JSONObject(params);
             JSONArray filmsArray = tmdb_json.getJSONArray(TMDB_RESULT);
-
-            //string que será montada para retorno com
-            //o mesmo tamanho de respostas do siste
-            String[] resultado = new String[filmsArray.length()];
 
             String poster_path;
             String title;
