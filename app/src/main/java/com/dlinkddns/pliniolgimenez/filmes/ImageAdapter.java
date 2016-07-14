@@ -13,21 +13,23 @@ import com.squareup.picasso.Picasso;
 class ImageAdapter extends BaseAdapter {
 
     private final static String thumbsUrl = "http://image.tmdb.org/t/p/w185";
+    private final int DISK_CACHE_SIZE = 2048;
     ImageView imageView;
     private Context mContext;
     private String[] mresultado;
+
     //referencias das imagens
     private Integer[] mThumbIds = {
-            R.drawable.sample1, R.drawable.sample2,
-            R.drawable.sample3, R.drawable.sample4,
-            R.drawable.sample5, R.drawable.sample6,
-            R.drawable.sample7, R.drawable.sample8,
-            R.drawable.sample9, R.drawable.sample10,
-            R.drawable.sample11, R.drawable.sample12,
-            R.drawable.sample13, R.drawable.sample14,
-            R.drawable.sample15, R.drawable.sample16,
-            R.drawable.sample17, R.drawable.sample19,
-            R.drawable.sample19, R.drawable.sample20
+            R.drawable.samplea, R.drawable.sampleb,
+            R.drawable.samplec, R.drawable.sampled,
+            R.drawable.samplee, R.drawable.samplef,
+            R.drawable.sampleg, R.drawable.sampleh,
+            R.drawable.samplei, R.drawable.samplej,
+            R.drawable.samplek, R.drawable.samplel,
+            R.drawable.samplem, R.drawable.samplen,
+            R.drawable.sampleo, R.drawable.samplep,
+            R.drawable.sampleq, R.drawable.samples,
+            R.drawable.samples, R.drawable.samplet
     };
 
     ImageAdapter(Context c, String[] resultado) {
@@ -47,9 +49,6 @@ class ImageAdapter extends BaseAdapter {
         return 0;
     }
 
-    public View getIndView(int position) {
-        return (View) this.imageView.findViewById(1300 + position);
-    }
 
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -58,7 +57,6 @@ class ImageAdapter extends BaseAdapter {
             // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            imageView.setId(1300 + position);
             imageView.setPadding(4, 2, 4, 2);
         } else {
             imageView = (ImageView) convertView;
@@ -75,20 +73,13 @@ class ImageAdapter extends BaseAdapter {
         //        .into(item.drawableId);
         //imageView.setImageResource(mThumbIds[position]);
 
-        //checa se existe em disco
-
-        //se existe em disco, carrega imagem de disco
-
-        //senao carrega imagem do site
-
         Picasso
                 .with(mContext)
                 .load(thumbsUrl + mresultado[position])
                 .resize(width / 2, width * 2 / 3)
-                .error(R.drawable.sample1)
+                .error(R.drawable.samplea)
                 .into(imageView);
+
         return imageView;
-
     }
-
 }

@@ -3,11 +3,10 @@ package com.dlinkddns.pliniolgimenez.filmes;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -17,13 +16,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,6 +53,8 @@ public class tmdbFragment extends Fragment {
     private static String[] filmPopularity = new String[RESPONSE_TOTAL];
     private static String[] filmVotes = new String[RESPONSE_TOTAL];
     private static String[] filmVotesAvg = new String[RESPONSE_TOTAL];
+
+
     View rootView;
     private ImageAdapter mAdapter;
     private GridView gridview;
@@ -136,37 +138,60 @@ public class tmdbFragment extends Fragment {
             updateTMDB(orderList);
         }
 
-        //TODO!
         Bitmap bmp = null;
+
         for (int i = 0; i < filmThumbnailUrl.length; i++) {
-            switch (i) {
-                case 0:
-                    bmp = BitmapFactory.decodeResource(getResources(), R.drawable.sample1);
-                    FileOutputStream out = null;
+
+            final String filename = i + ".jpg";
+
+
+            Target target = new Target() {
+                private final static String thumbsUrl = "http://image.tmdb.org/t/p/w185";
+
+                @Override
+                public void onPrepareLoad(Drawable arg0) {
+                    return;
+                }
+
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom arg1) {
+
                     try {
-                        String name = getFilename(i);
-                        out = getActivity().openFileOutput("1.jpg", getActivity().MODE_PRIVATE);
-                        bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
-                    } catch (FileNotFoundException e) {
+                        FileOutputStream ostream = getContext().openFileOutput(filename, getContext().MODE_PRIVATE);
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
+                        ostream.close();
+
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    break;
-            }
+                }
 
+                @Override
+                public void onBitmapFailed(Drawable arg0) {
+                    return;
+                }
+            };
+            int width = getContext().getResources().getDisplayMetrics().widthPixels;
+
+            Picasso.with(this.getContext())
+                    .load("http://image.tmdb.org/t/p/w185" + filmThumbnailUrl[i])
+                    .resize(width / 2, width * 2 / 3)
+                    .error(R.drawable.samplea)
+                    .into(target);
+
+
+            //String filename = i+".jpg";
+            //bmp = BitmapFactory.decodeByteArray());
+            //FileOutputStream out;
+            //String uriString = (out.getAbsolutePath());
+            //try {
+            //    out = getActivity().openFileOutput(filename, getActivity().MODE_PRIVATE);
+            //    bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
+            //} catch (FileNotFoundException e) {
+            //    e.printStackTrace();
+            //}
         }
-
     }
-
-    private String getFilename(int position) {
-        File file = new File(Environment.getDataDirectory()
-                .getPath(), "filmsFolder");
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-        String uriString = (file.getAbsolutePath() + filmThumbnailUrl[position]);
-        return uriString;
-    }
-
 
     @Override
     public void onResume() {
