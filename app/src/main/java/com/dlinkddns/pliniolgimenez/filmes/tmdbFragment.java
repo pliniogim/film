@@ -3,6 +3,7 @@ package com.dlinkddns.pliniolgimenez.filmes;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -134,36 +135,36 @@ public class tmdbFragment extends Fragment {
             old_list_order = orderList;
             updateTMDB(orderList);
         }
-        //grava em disco
-        //for (int i = 0; i < RESPONSE_TOTAL; i++) {
 
-        //    ImageView selImage = (ImageView) mAdapter.getIndView(1300+i);
-        //    Bitmap bm = ((BitmapDrawable) selImage.getDrawable()).getBitmap();
-        //    saveImageFile(bm, i);
-        //}
-    }
+        //TODO!
+        Bitmap bmp = null;
+        for (int i = 0; i < filmThumbnailUrl.length; i++) {
+            switch (i) {
+                case 0:
+                    bmp = BitmapFactory.decodeResource(getResources(), R.drawable.sample1);
+                    FileOutputStream out = null;
+                    try {
+                        String name = getFilename(i);
+                        out = getActivity().openFileOutput("1.jpg", getActivity().MODE_PRIVATE);
+                        bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+            }
 
-    //Code StackOverFlow by Clairvoyant
-    private String saveImageFile(Bitmap bitmap, int position) {
-        FileOutputStream out = null;
-        String filename = getFilename(position);
-        try {
-            out = new FileOutputStream(filename);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         }
-        return filename;
+
     }
 
     private String getFilename(int position) {
-        File file = new File(Environment.getExternalStorageDirectory()
+        File file = new File(Environment.getDataDirectory()
                 .getPath(), "filmsFolder");
         if (!file.exists()) {
             file.mkdirs();
         }
-        String uriSting = (file.getAbsolutePath() + filmThumbnailUrl[position] + ".jpg");
-        return uriSting;
+        String uriString = (file.getAbsolutePath() + filmThumbnailUrl[position]);
+        return uriString;
     }
 
 
