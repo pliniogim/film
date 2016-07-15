@@ -48,6 +48,9 @@ public class tmdbFragment extends Fragment {
     //acesso às variaveis ja decodificadas no JSON
     private static String[] filmThumbnailUrl = new String[RESPONSE_TOTAL];
     private static String[] filmTitle = new String[RESPONSE_TOTAL];
+
+
+    private static String[] filmReleaseDate = new String[RESPONSE_TOTAL];
     private static String[] filmOverview = new String[RESPONSE_TOTAL];
     private static String[] filmAdult = new String[RESPONSE_TOTAL];
     private static String[] filmPopularity = new String[RESPONSE_TOTAL];
@@ -73,6 +76,10 @@ public class tmdbFragment extends Fragment {
 
     static String getFilmThumbnailUrl(int indice) {
         return filmThumbnailUrl[indice];
+    }
+
+    static String getFilmReleaseDate(int indice) {
+        return filmReleaseDate[indice];
     }
 
     static String getFilmAdult(int indice) {
@@ -142,7 +149,7 @@ public class tmdbFragment extends Fragment {
 
         for (int i = 0; i < filmThumbnailUrl.length; i++) {
 
-            final String filename = i + ".jpg";
+            final String filename = filmThumbnailUrl[i];
 
 
             Target target = new Target() {
@@ -367,6 +374,7 @@ public class tmdbFragment extends Fragment {
             final String TMDB_POSTER_PATH = "poster_path";
             final String TMDB_TITLE = "title";
             final String TMDB_OVERVIEW = "overview";
+            final String TMDB_RELEASEDATE = "release_date";
             final String TMDB_ADULT = "adult";
             final String TMDB_POPULARITY = "popularity";
             final String TMDB_VOTES = "vote_count";
@@ -380,6 +388,7 @@ public class tmdbFragment extends Fragment {
             String poster_path;
             String title;
             String overview;
+            String releaseDate;
             String adult;
             String popularity;
             String votes;
@@ -392,6 +401,7 @@ public class tmdbFragment extends Fragment {
                 poster_path = films.getString(TMDB_POSTER_PATH);
                 title = films.getString(TMDB_TITLE);
                 overview = films.getString(TMDB_OVERVIEW);
+                releaseDate = films.getString(TMDB_RELEASEDATE);
                 adult = films.getString(TMDB_ADULT);
                 popularity = films.getString(TMDB_POPULARITY);
                 votes = films.getString(TMDB_VOTES);
@@ -401,6 +411,7 @@ public class tmdbFragment extends Fragment {
                 filmTitle[i] = title;
                 filmThumbnailUrl[i] = poster_path;
                 filmOverview[i] = overview;
+                filmReleaseDate[i] = releaseDate;
                 filmAdult[i] = adult;
                 filmPopularity[i] = popularity;
                 filmVotes[i] = votes;
