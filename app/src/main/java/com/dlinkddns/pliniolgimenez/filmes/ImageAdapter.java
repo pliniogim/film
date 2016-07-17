@@ -11,8 +11,8 @@ import com.squareup.picasso.Picasso;
 
 
 class ImageAdapter extends BaseAdapter {
+    private static String thumbsUrl;
 
-    private final static String thumbsUrl = "http://image.tmdb.org/t/p/w185";
     private final int DISK_CACHE_SIZE = 2048;
     ImageView imageView;
     private Context mContext;
@@ -63,15 +63,7 @@ class ImageAdapter extends BaseAdapter {
         }
 
         int width = mContext.getResources().getDisplayMetrics().widthPixels;
-
-        //com.squareup.picasso.Picasso
-        //        .with(context)
-        //        .load("some url")
-        //        .centerCrop().resize(width/2,width/2)
-        //        .error(R.drawable.placeholder)
-        //        .placeholder(R.drawable.placeholder)
-        //        .into(item.drawableId);
-        //imageView.setImageResource(mThumbIds[position]);
+        thumbsUrl = tmdbFragment.getThumbsUrl();
 
         Picasso
                 .with(mContext)

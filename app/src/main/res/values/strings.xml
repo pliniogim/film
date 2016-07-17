@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Filmes</string>
+    <string name="app_name">Films</string>
 
-    <string name="title_activity_detail">DetailActivity</string>
+    <string name="title_activity_detail">Film Detail</string>
 
     <string name="action_settings">Settings</string>
 
@@ -24,6 +24,10 @@
 
     <!-- DETAIL ACTIVITY -->
     <string name="detail_activity_release">Release:</string>
+    <string name="adultTheme">Tema adulto</string>
+    <string name="popularity">Popularity:</string>
+    <string name="nbrvotes"># Votes:</string>
+    <string name="avgvotes">"Avg: "</string>
 
 
     <!-- Strings related to Settings -->

@@ -31,25 +31,44 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-
 /**
- * A simple {@link Fragment} subclass.
+ * {@link Fragment} subclass.
+ * Executa a montagem da tela
+ * (gridview com o thumbnail dos filmes)
  */
+
 public class tmdbFragment extends Fragment {
 
-    //Total de respostas JSON
+    /**
+     * VARIAVEIS DE CLASSE
+     */
+
+    //Total de respostas JSON - TODO mover para config
     private final static int RESPONSE_TOTAL = 20;
+    private final static String thumbsUrl = "http://image.tmdb.org/t/p/w185";
+
 
     //booleano para controle de conteúdo http válido
     private static boolean valid_http_data = false;
 
     //booleano para controle de troca da ordem da lista
     private static String old_list_order = "";
-    //acesso às variaveis ja decodificadas no JSON
+
+    //view raiz
+    private View rootView;
+
+    //Adaptador gridview (classe ImageAdapter)
+    private ImageAdapter mAdapter;
+
+    //gridview de referencia
+    private GridView gridview;
+
+    //posição do foco do gridview
+    private int viewFocus = 0;
+
+    //variaveis decodificadas no JSON
     private static String[] filmThumbnailUrl = new String[RESPONSE_TOTAL];
     private static String[] filmTitle = new String[RESPONSE_TOTAL];
-
-
     private static String[] filmReleaseDate = new String[RESPONSE_TOTAL];
     private static String[] filmOverview = new String[RESPONSE_TOTAL];
     private static String[] filmAdult = new String[RESPONSE_TOTAL];
@@ -57,13 +76,18 @@ public class tmdbFragment extends Fragment {
     private static String[] filmVotes = new String[RESPONSE_TOTAL];
     private static String[] filmVotesAvg = new String[RESPONSE_TOTAL];
 
+    /**
+     * FIM VARIAVEIS
+     */
 
-    View rootView;
-    private ImageAdapter mAdapter;
-    private GridView gridview;
 
     // construtor publico obrigatorio
     public tmdbFragment() {
+    }
+
+    //metodos getter
+    public static String getThumbsUrl() {
+        return thumbsUrl;
     }
 
     static String getFilmTitle(int indice) {
@@ -98,10 +122,11 @@ public class tmdbFragment extends Fragment {
         return filmVotesAvg[indice];
     }
 
+
+    //ONCREATEVIEW
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
 
         //armazena a vista para melhorar pesquisa a partir de rootView
         rootView = inflater.inflate(R.layout.fragment_tmdb, container, false);
@@ -110,33 +135,52 @@ public class tmdbFragment extends Fragment {
         return rootView;
     }
 
-
+    //ONSTART
     @Override
     public void onStart() {
         //chama supermetodo
         super.onStart();
+        //cria adaptador
+        setAdapter();
+        //grava arquivos
+        //fileOutput();
+    }
 
-        //pega a preferencia
+    //ONRESUME
+    @Override
+    public void onResume() {
+        super.onResume();
+        //cria adaptador
+        setAdapter();
+        //    fileOutput();
+    }
+
+
+    /**
+     * INICIO ROTINAS
+     * DE APOIO
+     */
+
+
+    //seta adaptador de imagens
+    public void setAdapter() {
+
+        //pega a preferencia de ordem da listagem (mais votados x popular)
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String orderList = prefs.getString(getString(R.string.pref_initial_key), getString(R.string.pref_initial_popular));
 
-        //classe para alimentar o listView Adapter
+        //verifica com o valor anterior guardado para atualizar ou não os dados da vista
         if (old_list_order.equals(orderList)) {
+
+            //se já houve um resultado válido retornado online
             if (valid_http_data) {
-                mAdapter = new ImageAdapter(getActivity(), filmThumbnailUrl);
-                gridview.setAdapter(mAdapter);
-                gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view,
-                                            int position, long id) {
-                        String indice = String.valueOf(position);
-                        Intent intent = new Intent(getActivity(), DetailActivity.class)
-                                .putExtra(Intent.EXTRA_TEXT, indice);
-                        startActivity(intent);
-                    }
-                });
-
-
+                //classe para alimentar o listView Adapter
+                //mAdapter = new ImageAdapter(getActivity(), filmThumbnailUrl);
+                //seta o adaptador
+                //gridview.setAdapter(mAdapter);
+                gridview.setFocusable(true);
+                gridview.setSelection(viewFocus);
+                setAdapterListener();
             } else {
                 updateTMDB(orderList);
             }
@@ -144,14 +188,29 @@ public class tmdbFragment extends Fragment {
             old_list_order = orderList;
             updateTMDB(orderList);
         }
+    }
 
+    //listener do adaptador
+    private void setAdapterListener() {
+        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                viewFocus = position;
+                String indice = String.valueOf(position);
+                Intent intent = new Intent(getActivity(), DetailActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, indice);
+                startActivity(intent);
+            }
+        });
+    }
+
+    //gravacao de arquivos
+    private void fileOutput() {
         Bitmap bmp = null;
-
         for (int i = 0; i < filmThumbnailUrl.length; i++) {
-
-            final String filename = filmThumbnailUrl[i];
-
-
+            //final String filename = filmThumbnailUrl[i];
+            final String filename = i + ".jpg";
             Target target = new Target() {
                 private final static String thumbsUrl = "http://image.tmdb.org/t/p/w185";
 
@@ -164,7 +223,7 @@ public class tmdbFragment extends Fragment {
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom arg1) {
 
                     try {
-                        FileOutputStream ostream = getContext().openFileOutput(filename, getContext().MODE_PRIVATE);
+                        FileOutputStream ostream = MainActivity.getContexto().openFileOutput(filename, getContext().MODE_PRIVATE);
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
                         ostream.close();
 
@@ -180,58 +239,12 @@ public class tmdbFragment extends Fragment {
             };
             int width = getContext().getResources().getDisplayMetrics().widthPixels;
 
-            Picasso.with(this.getContext())
+            Picasso.with(MainActivity.getContexto())
                     .load("http://image.tmdb.org/t/p/w185" + filmThumbnailUrl[i])
                     .resize(width / 2, width * 2 / 3)
                     .error(R.drawable.samplea)
                     .into(target);
-
-
-            //String filename = i+".jpg";
-            //bmp = BitmapFactory.decodeByteArray());
-            //FileOutputStream out;
-            //String uriString = (out.getAbsolutePath());
-            //try {
-            //    out = getActivity().openFileOutput(filename, getActivity().MODE_PRIVATE);
-            //    bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
-            //} catch (FileNotFoundException e) {
-            //    e.printStackTrace();
-            //}
         }
-    }
-
-    @Override
-    public void onResume() {
-
-        super.onResume();
-        //pega a preferencia
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String orderList = prefs.getString(getString(R.string.pref_initial_key), getString(R.string.pref_initial_popular));
-
-        //classe para alimentar o listView Adapter
-        if (old_list_order.equals(orderList)) {
-            if (valid_http_data) {
-                gridview.setAdapter(new ImageAdapter(getActivity(), filmThumbnailUrl));
-                gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view,
-                                            int position, long id) {
-                        String indice = String.valueOf(position);
-                        Intent intent = new Intent(getActivity(), DetailActivity.class)
-                                .putExtra(Intent.EXTRA_TEXT, indice);
-                        startActivity(intent);
-                    }
-                });
-
-
-            } else {
-                updateTMDB(orderList);
-            }
-        } else {
-            old_list_order = orderList;
-            updateTMDB(orderList);
-        }
-
     }
 
     private void updateTMDB(String orderList) {
@@ -239,7 +252,7 @@ public class tmdbFragment extends Fragment {
         TMDBTask.execute(orderList);
     }
 
-
+    //TODO mover da classe asynctask...
     private class FetchTMDB extends AsyncTask<String, Void, String[]> {
         private final String LOG_TAG = FetchTMDB.class.getSimpleName();
 
@@ -341,7 +354,7 @@ public class tmdbFragment extends Fragment {
                 e.printStackTrace();
             }
 
-            // This will only happen if there was an error getting or parsing the forecast.
+            // erro na decodificacao
             return null;
         }
 
@@ -350,21 +363,15 @@ public class tmdbFragment extends Fragment {
         protected void onPostExecute(String[] strings) {
             if (strings != null) {
                 valid_http_data = true;
+                gridview.setFocusable(true);
+                gridview.setSelection(viewFocus);
                 gridview.setAdapter(new ImageAdapter(getActivity(), strings));
-                gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view,
-                                            int position, long id) {
-                        String indice = String.valueOf(position);
-                        Intent intent = new Intent(getActivity(), DetailActivity.class)
-                                .putExtra(Intent.EXTRA_TEXT, indice);
-                        startActivity(intent);
-                    }
-                });
+                setAdapterListener();
+                //fileOutput();
             }
         }
 
-
+        //decodifica a string JSON
         private String[] getTMDBDataFromJson(String params) throws JSONException {
 
             Log.i(LOG_TAG, "Dentro da rotina getTMDBDataFromJson");
