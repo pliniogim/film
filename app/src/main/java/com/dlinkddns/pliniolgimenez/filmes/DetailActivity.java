@@ -10,11 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
-
-import java.io.File;
 
 
 /**
@@ -25,8 +22,10 @@ import java.io.File;
  * Created by plinio on 11/07/2016.
  */
 public class DetailActivity extends AppCompatActivity {
+
+    private static int indice;
     private static String thumbsUrl;
-    private static Context mContext;
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,15 +33,13 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_detail);
-        thumbsUrl = tmdbFragment.getThumbsUrl();
+        thumbsUrl = tmdbActivity.getThumbsUrl();
         mContext = getApplicationContext();
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new DetailFragment())
                     .commit();
-
-
         }
     }
 
@@ -67,53 +64,69 @@ public class DetailActivity extends AppCompatActivity {
                 String indiceStr = intent.getStringExtra(Intent.EXTRA_TEXT);
 
 
-                int indice = Integer.parseInt(indiceStr);
+                indice = Integer.parseInt(indiceStr);
                 //titulo
-                ((TextView) rootView.findViewById(R.id.detail_activity_titulo)).setText(tmdbFragment.getFilmTitle(indice));
+                ((TextView) rootView.findViewById(R.id.detail_activity_titulo)).setText(tmdbActivity.getFilmTitle(indice));
                 //resenha
-                ((TextView) rootView.findViewById(R.id.detail_activity_overview)).setText(tmdbFragment.getFilmOverview(indice));
+                ((TextView) rootView.findViewById(R.id.detail_activity_overview)).setText(tmdbActivity.getFilmOverview(indice));
                 //data de lancamento
-                ((TextView) rootView.findViewById(R.id.detail_activity_releasedate)).setText(tmdbFragment.getFilmReleaseDate(indice).substring(0, 4));
+                ((TextView) rootView.findViewById(R.id.detail_activity_releasedate)).setText(tmdbActivity.getFilmReleaseDate(indice).substring(0, 4));
                 //tema adulto getFilmAdult(int indice)
-                if (tmdbFragment.getFilmAdult(indice).equals("true")) {
+                if (tmdbActivity.getFilmAdult(indice).equals("true")) {
                     ((TextView) rootView.findViewById(R.id.detail_activity_adult)).setText(R.string.adultTheme);
                 } else {
                     ((TextView) rootView.findViewById(R.id.detail_activity_adult)).setText(" ");
                 }
                 //popularidade
-                ((TextView) rootView.findViewById(R.id.detail_activity_popularity)).setText(getString(R.string.popularity) +" "+ tmdbFragment.getFilmPopularity(indice));
+                ((TextView) rootView.findViewById(R.id.detail_activity_popularity)).setText(getString(R.string.popularity) + " " + tmdbActivity.getFilmPopularity(indice));
                 //votos
-                ((TextView) rootView.findViewById(R.id.detail_activity_votes)).setText(getString(R.string.nbrvotes)+" "+tmdbFragment.getFilmVotes(indice));
+                ((TextView) rootView.findViewById(R.id.detail_activity_votes)).setText(getString(R.string.nbrvotes) + " " + tmdbActivity.getFilmVotes(indice));
                 //media de votos
-                ((TextView) rootView.findViewById(R.id.detail_activity_avgvotes)).setText(getString(R.string.avgvotes)+" "+tmdbFragment.getFilmVotesAvg(indice));
+                ((TextView) rootView.findViewById(R.id.detail_activity_avgvotes)).setText(getString(R.string.avgvotes) + " " + tmdbActivity.getFilmVotesAvg(indice));
 
 
                 //imagem
                 ImageView view = (ImageView) rootView.findViewById(R.id.detail_activity_imageview);
-                //int width = mContext.getResources().getDisplayMetrics().widthPixels;
-                //isFilePresent(file);
                 Picasso
                         .with(MainActivity.getContexto())
-                        .load(tmdbFragment.getThumbsUrl() + tmdbFragment.getFilmThumbnailUrl(indice))
+                        .load(tmdbActivity.getThumbsUrl() + tmdbActivity.getFilmThumbnailUrl(indice))
                         //.resize(width / 2, width * 2 / 3)
                         .error(R.drawable.samplea)
                         .into(view);
+            } else {
+
+                rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+                indice = 0;
+                //titulo
+                ((TextView) rootView.findViewById(R.id.detail_activity_titulo)).setText("1");
+                //resenha
+                ((TextView) rootView.findViewById(R.id.detail_activity_overview)).setText("2");
+                //data de lancamento
+                ((TextView) rootView.findViewById(R.id.detail_activity_releasedate)).setText("3");
+                //tema adulto getFilmAdult(int indice)
+                ((TextView) rootView.findViewById(R.id.detail_activity_adult)).setText("4");
+                //popularidade
+                ((TextView) rootView.findViewById(R.id.detail_activity_popularity)).setText("5");
+                //votos
+                ((TextView) rootView.findViewById(R.id.detail_activity_votes)).setText("6");
+                //media de votos
+                ((TextView) rootView.findViewById(R.id.detail_activity_avgvotes)).setText("7");
 
 
-                //TODO scrollView.setBackgroundTintMode();
-                //ScrollView scrollView = (ScrollView) rootView.findViewById(R.id.detail_activity_scrollview);
-                //scrollView.setBackgroundColor(Color.LTGRAY);
-                //scrollView.setBackground(view.getDrawable());
+                //imagem
+                //ImageView view = (ImageView) rootView.findViewById(R.id.detail_activity_imageview);
+                //Picasso
+                //        .with(MainActivity.getContexto())
+                //        .load(R.drawable.samplea)
+                //        //.resize(width / 2, width * 2 / 3)
+                //        .error(R.drawable.samplea)
+                //        .into(view);
             }
             return rootView;
         }
 
-        public boolean isFilePresent(String fileName) {
-
-            Toast.makeText(getContext(), "File:" + fileName, Toast.LENGTH_LONG).show();
-            String path = getContext().getFilesDir().getAbsolutePath() + "/" + fileName;
-            File file = new File(path);
-            return file.exists();
-        }
     }
+
 }
+
+

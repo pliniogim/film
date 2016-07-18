@@ -63,12 +63,12 @@ class ImageAdapter extends BaseAdapter {
         }
 
         int width = mContext.getResources().getDisplayMetrics().widthPixels;
-        thumbsUrl = tmdbFragment.getThumbsUrl();
+        thumbsUrl = tmdbActivity.getThumbsUrl();
 
         Picasso
                 .with(mContext)
                 .load(thumbsUrl + mresultado[position])
-                .resize(width / 2, width * 2 / 3)
+                //.resize(width / 3, width * 1 / 2)
                 .error(R.drawable.samplea)
                 .into(imageView);
 

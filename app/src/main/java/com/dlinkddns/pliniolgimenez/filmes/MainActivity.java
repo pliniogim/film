@@ -31,27 +31,30 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static Context contexto;
+    private final String LOG_TAG = MainActivity.class.getSimpleName();
+
     public static Context getContexto() {
         return contexto;
     }
 
-    public static Context contexto;
-    private final String LOG_TAG = MainActivity.class.getSimpleName();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         contexto = getApplicationContext();
-        //inicializa fragment
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.tmdbcontainer, new tmdbFragment())
+
+        if (savedInstanceState != null) {
+            return;
+        } else {
+            //inicializa fragment
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.tmdbcontainer, new tmdbActivity.tmdbFragment())
                     .commit();
-        }
-
-
+         }
     }
 
     @Override
