@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -381,6 +380,7 @@ public class tmdbActivity extends AppCompatActivity {
                     gridview.setSelection(viewFocus);
                     gridview.setAdapter(new ImageAdapter(getActivity(), strings));
                     setAdapterListener();
+
                     //fileOutput();
                 }
             }
