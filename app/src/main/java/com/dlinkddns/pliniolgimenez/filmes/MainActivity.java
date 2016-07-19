@@ -21,16 +21,23 @@
 */
 package com.dlinkddns.pliniolgimenez.filmes;
 
+import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "Main" ;
     public static Context contexto;
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -43,19 +50,30 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-
         contexto = getApplicationContext();
 
         if (savedInstanceState != null) {
             return;
         } else {
+
             //inicializa fragment
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.tmdbcontainer, new tmdbActivity.tmdbFragment())
                     .commit();
-         }
+
+            //String layout_choice = getString(R.string.selected_configuration);
+
+            //if (layout_choice.equals("large")) {
+            //    getSupportFragmentManager()
+            //            .beginTransaction()
+            //            .add(R.id.container, new DetailActivity.DetailFragment())
+            //            .commit();
+            //}
+        }
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 
-class ImageAdapter extends BaseAdapter {
+class ImageAdapter2 extends BaseAdapter {
     private static String thumbsUrl;
 
     private final int DISK_CACHE_SIZE = 2048;
@@ -32,7 +32,7 @@ class ImageAdapter extends BaseAdapter {
             R.drawable.samples, R.drawable.samplet
     };
 
-    ImageAdapter(Context c, String[] resultado) {
+    ImageAdapter2(Context c, String[] resultado) {
         mContext = c;
         mresultado = resultado;
     }
@@ -68,7 +68,7 @@ class ImageAdapter extends BaseAdapter {
         Picasso
                 .with(mContext)
                 .load(thumbsUrl + mresultado[position])
-                .resize(width / 2, width * 2 / 3)
+                .resize(width / 6, width * 1 / 4)
                 .error(R.drawable.samplea)
                 .into(imageView);
 

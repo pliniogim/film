@@ -3,6 +3,8 @@
 
     <string name="title_activity_detail">Film Detail</string>
 
+    <string name="selected_configuration">normal</string>
+
     <string name="action_settings">Settings</string>
 
     <!-- Label for popular/most rated pref. option  [CHAR LIMIT=30] -->

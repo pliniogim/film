@@ -1,10 +1,12 @@
 package com.dlinkddns.pliniolgimenez.filmes;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,8 +40,16 @@ public class DetailActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new DetailFragment())
+                    .add(R.id.container, new DetailActivity.DetailFragment())
                     .commit();
+
+            String layout_choice = getString(R.string.selected_configuration);
+
+            if (layout_choice.equals("large")) {
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.tmdbcontainer, new tmdbActivity2.tmdbFragment())
+                        .commit();
+            }
         }
     }
 

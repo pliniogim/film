@@ -5,7 +5,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <TextView
@@ -40,7 +40,7 @@
                     android:id="@+id/detail_activity_releasedate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/thirtydp"
+                    android:paddingLeft="30dp"
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:textColor="@android:color/black"
                     android:textSize="20sp"
@@ -48,9 +48,9 @@
 
                 <TextView
                     android:id="@+id/detail_activity_adult"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/thirtydp"
+                    android:paddingLeft="30dp"
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:textColor="@android:color/darker_gray"
                     android:textSize="18sp"
@@ -59,9 +59,9 @@
 
                 <TextView
                     android:id="@+id/detail_activity_popularity"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/thirtydp"
+                    android:paddingLeft="30dp"
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:textColor="@android:color/darker_gray"
                     android:textSize="18sp"
@@ -70,9 +70,9 @@
 
                 <TextView
                     android:id="@+id/detail_activity_votes"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/thirtydp"
+                    android:paddingLeft="30dp"
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:textColor="@android:color/darker_gray"
                     android:textSize="18sp"
@@ -81,9 +81,9 @@
 
                 <TextView
                     android:id="@+id/detail_activity_avgvotes"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/thirtydp"
+                    android:paddingLeft="30dp"
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:textColor="@android:color/darker_gray"
                     android:textSize="18sp"
@@ -111,9 +111,9 @@
 
         <TextView
             android:id="@+id/detail_activity_overview"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/activity_vertical_margin"
+            android:padding="16dp"
             android:textSize="20sp" />
 
     </LinearLayout>
