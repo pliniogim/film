@@ -30,6 +30,7 @@
     <string name="popularity">Popularity:</string>
     <string name="nbrvotes"># Votes:</string>
     <string name="avgvotes">"Avg: "</string>
+    <string name="film_thumbnail">film thumbnail</string>
 
 
     <!-- Strings related to Settings -->

@@ -5,7 +5,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
@@ -41,6 +41,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="30dp"
+                    android:paddingRight="30dp"
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:textColor="@android:color/black"
                     android:textSize="20sp"
@@ -51,6 +52,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="30dp"
+                    android:paddingRight="30dp"
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:textColor="@android:color/darker_gray"
                     android:textSize="18sp"
@@ -62,6 +64,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="30dp"
+                    android:paddingRight="30dp"
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:textColor="@android:color/darker_gray"
                     android:textSize="18sp"
@@ -73,6 +76,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="30dp"
+                    android:paddingRight="30dp"
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:textColor="@android:color/darker_gray"
                     android:textSize="18sp"
@@ -84,6 +88,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="30dp"
+                    android:paddingRight="30dp"
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:textColor="@android:color/darker_gray"
                     android:textSize="18sp"
@@ -98,7 +103,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:contentDescription=""
+                android:contentDescription="@string/film_thumbnail"
                 android:paddingTop="@dimen/activity_vertical_margin" />
 
         </LinearLayout>

@@ -54,6 +54,8 @@ public class tmdbActivity extends AppCompatActivity {
     private static boolean valid_http_data = false;
     //booleano para controle de troca da ordem da lista
     private static String old_list_order = "";
+
+
     //variaveis decodificadas no JSON
     private static String[] filmThumbnailUrl = new String[RESPONSE_TOTAL];
     private static String[] filmTitle = new String[RESPONSE_TOTAL];
@@ -78,6 +80,10 @@ public class tmdbActivity extends AppCompatActivity {
     //metodos getter
     public static String getThumbsUrl() {
         return thumbsUrl;
+    }
+
+    static String[] getFilmThumbnailUrl() {
+        return filmThumbnailUrl;
     }
 
     static String getFilmTitle(int indice) {
@@ -236,7 +242,7 @@ public class tmdbActivity extends AppCompatActivity {
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom arg1) {
 
                         try {
-                            FileOutputStream ostream = MainActivity.getContexto().openFileOutput(filename, getContext().MODE_PRIVATE);
+                            FileOutputStream ostream = getActivity().getApplicationContext().openFileOutput(filename, getContext().MODE_PRIVATE);
                             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
                             ostream.close();
 
@@ -252,7 +258,7 @@ public class tmdbActivity extends AppCompatActivity {
                 };
                 int width = getContext().getResources().getDisplayMetrics().widthPixels;
 
-                Picasso.with(MainActivity.getContexto())
+                Picasso.with(getActivity().getApplicationContext())
                         .load("http://image.tmdb.org/t/p/w185" + filmThumbnailUrl[i])
                         .resize(width / 2, width * 2 / 3)
                         .error(R.drawable.samplea)

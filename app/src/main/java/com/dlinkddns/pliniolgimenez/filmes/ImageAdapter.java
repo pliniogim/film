@@ -9,14 +9,11 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-
 class ImageAdapter extends BaseAdapter {
-    private static String thumbsUrl;
 
-    private final int DISK_CACHE_SIZE = 2048;
-    ImageView imageView;
+    //contexto e string das urls dos thumbnails dos filmes
     private Context mContext;
-    private String[] mresultado;
+    private String[] mresult;
 
     //referencias das imagens
     private Integer[] mThumbIds = {
@@ -32,42 +29,45 @@ class ImageAdapter extends BaseAdapter {
             R.drawable.samples, R.drawable.samplet
     };
 
-    ImageAdapter(Context c, String[] resultado) {
+    ImageAdapter(Context c, String[] result) {
         mContext = c;
-        mresultado = resultado;
+        mresult = result;
     }
 
+    //conta itens
     public int getCount() {
         return mThumbIds.length;
     }
 
+    //obtem objeto na posicao x
     public Object getItem(int position) {
         return null;
     }
 
+    //obtem identidade do objeto na posicao x
     public long getItemId(int position) {
         return 0;
     }
 
-
-    // create a new ImageView for each item referenced by the Adapter
+    // cria um novo imageview para cada item do adapterview
     public View getView(int position, View convertView, ViewGroup parent) {
 
+        ImageView imageView;
         if (convertView == null) {
-            // if it's not recycled, initialize some attributes
+            // se nao e reciclado pega novos parametros
             imageView = new ImageView(mContext);
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            imageView.setPadding(4, 2, 4, 2);
+            imageView.setPadding(2, 0, 2, 0);
         } else {
             imageView = (ImageView) convertView;
         }
 
         int width = mContext.getResources().getDisplayMetrics().widthPixels;
-        thumbsUrl = tmdbActivity.getThumbsUrl();
+        String thumbsUrl = tmdbActivity.getThumbsUrl();
 
         Picasso
                 .with(mContext)
-                .load(thumbsUrl + mresultado[position])
+                .load(thumbsUrl + mresult[position])
                 .resize(width / 2, width * 2 / 3)
                 .error(R.drawable.samplea)
                 .into(imageView);

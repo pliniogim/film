@@ -21,58 +21,31 @@
 */
 package com.dlinkddns.pliniolgimenez.filmes;
 
-import android.app.Activity;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 
-
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "Main" ;
-    public static Context contexto;
-    private final String LOG_TAG = MainActivity.class.getSimpleName();
-
-    public static Context getContexto() {
-        return contexto;
-    }
+    //private final String LOG_TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //inicializa vista
         setContentView(R.layout.activity_main);
-        contexto = getApplicationContext();
 
-        if (savedInstanceState != null) {
-            return;
-        } else {
-
+        if (savedInstanceState == null) {
             //inicializa fragment
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.tmdbcontainer, new tmdbActivity.tmdbFragment())
                     .commit();
-
-            //String layout_choice = getString(R.string.selected_configuration);
-
-            //if (layout_choice.equals("large")) {
-            //    getSupportFragmentManager()
-            //            .beginTransaction()
-            //            .add(R.id.container, new DetailActivity.DetailFragment())
-            //            .commit();
-            //}
         }
     }
-
 
 
     @Override
@@ -84,12 +57,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // para o actionbar lidar com os eventos e tambem com
+        // os botoes home/up desde que a atividade esteja associada
+        // com parent activity no manifest
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
