@@ -9,18 +9,18 @@
         android:id="@+id/tmdbcontainer"
         android:name="com.dlinkddns.pliniolgimenez.filmes.tmdbActivity$tmdbFragment"
         class="com.dlinkddns.pliniolgimenez.filmes.tmdbActivity"
-        tools:layout="@layout/fragment_tmdb"
         android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="1"
-        android:layout_height="match_parent" />
+        tools:layout="@layout/grid_fragment_tmdb" />
 
     <FrameLayout
         android:id="@+id/container"
         android:name="com.dlinkddns.pliniolgimenez.filmes.DetailActivity$DetailFragment"
         class="com.dlinkddns.pliniolgimenez.filmes.DetailActivity"
-        tools:layout="@layout/fragment_detail"
         android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="2"
-        android:layout_height="match_parent" />
+        tools:layout="@layout/scrollview_fragment_detail" />
 
 </LinearLayout>

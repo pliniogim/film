@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //inicializa vista
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.framelayout_activity_main);
 
         if (savedInstanceState == null) {
             //inicializa fragment

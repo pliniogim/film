@@ -2,10 +2,13 @@ package com.dlinkddns.pliniolgimenez.filmes;
 
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -51,15 +54,16 @@ class ImageAdapter extends BaseAdapter {
 
     // cria um novo imageview para cada item do adapterview
     public View getView(int position, View convertView, ViewGroup parent) {
+        FrameLayout view = new FrameLayout(mContext);
+        ImageView imageView = new ImageView(mContext);
+        TextView textView = new TextView(mContext);
 
-        ImageView imageView;
-        if (convertView == null) {
-            // se nao e reciclado pega novos parametros
-            imageView = new ImageView(mContext);
-            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            imageView.setPadding(2, 0, 2, 0);
-        } else {
-            imageView = (ImageView) convertView;
+        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        imageView.setPadding(2, 0, 2, 0);
+
+        //view reciclado
+        if (convertView != null) {
+            view = (FrameLayout) convertView;
         }
 
         int width = mContext.getResources().getDisplayMetrics().widthPixels;
@@ -72,6 +76,16 @@ class ImageAdapter extends BaseAdapter {
                 .error(R.drawable.samplea)
                 .into(imageView);
 
-        return imageView;
+
+        textView.setText(String.valueOf(position + 1));
+        textView.setPadding(20, 20, 0, 0);
+        textView.setTextSize(40);
+        textView.setTextColor(Color.WHITE);
+        textView.setShadowLayer(10, 0, 0, Color.BLACK);
+
+        view.addView(imageView);
+        view.addView(textView);
+
+        return view;
     }
 }

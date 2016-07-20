@@ -133,7 +133,7 @@ public class tmdbActivity extends AppCompatActivity {
                                  Bundle savedInstanceState) {
 
             //armazena a vista para melhorar pesquisa a partir de rootView
-            rootView = inflater.inflate(R.layout.fragment_tmdb, container, false);
+            rootView = inflater.inflate(R.layout.grid_fragment_tmdb, container, false);
             gridview = (GridView) rootView.findViewById(R.id.gridview);
             //retorna a vista
             return rootView;

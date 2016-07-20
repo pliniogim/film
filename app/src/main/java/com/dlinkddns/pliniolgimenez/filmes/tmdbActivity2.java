@@ -42,7 +42,7 @@ public class tmdbActivity2 extends tmdbActivity {
                                  Bundle savedInstanceState) {
 
             //armazena a vista para melhorar pesquisa a partir de rootView
-            View rootView = inflater.inflate(R.layout.fragment_tmdb, container, false);
+            View rootView = inflater.inflate(R.layout.grid_fragment_tmdb, container, false);
             gridview = (GridView) rootView.findViewById(R.id.gridview);
 
             //retorna a vista

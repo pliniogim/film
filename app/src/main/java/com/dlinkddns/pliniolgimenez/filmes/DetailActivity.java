@@ -60,7 +60,7 @@ public class DetailActivity extends AppCompatActivity {
                                  Bundle savedInstanceState) {
 
             //infla vista
-            View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+            View rootView = inflater.inflate(R.layout.scrollview_fragment_detail, container, false);
 
             //pega os parametros passados para a atividade
             Intent intent = getActivity().getIntent();
