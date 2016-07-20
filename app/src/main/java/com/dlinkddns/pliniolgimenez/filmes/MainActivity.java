@@ -22,10 +22,13 @@
 package com.dlinkddns.pliniolgimenez.filmes;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,6 +41,16 @@ public class MainActivity extends AppCompatActivity {
         //inicializa vista
         setContentView(R.layout.framelayout_activity_main);
 
+        //pega a preferencia de ordem da listagem (mais votados x popular)
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String orderList = prefs.getString(getString(R.string.pref_initial_key), getString(R.string.pref_initial_popular));
+
+        if (orderList.equals("popular")){
+            this.setTitle("Films/popular");
+        } else {
+            this.setTitle("Films/Most rated");
+        }
+
         if (savedInstanceState == null) {
             //inicializa fragment
             getSupportFragmentManager()
@@ -47,6 +60,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onPostResume() {
+        ViewGroup vg = (ViewGroup) findViewById (R.id.tmdbcontainer);
+        vg.invalidate();
+        super.onPostResume();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
