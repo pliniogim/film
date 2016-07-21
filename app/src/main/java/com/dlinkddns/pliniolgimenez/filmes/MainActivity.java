@@ -28,11 +28,13 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
+import android.widget.FrameLayout;
+
 
 public class MainActivity extends AppCompatActivity {
 
     //private final String LOG_TAG = MainActivity.class.getSimpleName();
+    FrameLayout frameLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,12 +42,11 @@ public class MainActivity extends AppCompatActivity {
 
         //inicializa vista
         setContentView(R.layout.framelayout_activity_main);
-
         //pega a preferencia de ordem da listagem (mais votados x popular)
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String orderList = prefs.getString(getString(R.string.pref_initial_key), getString(R.string.pref_initial_popular));
 
-        if (orderList.equals("popular")){
+        if (orderList.equals("popular")) {
             this.setTitle("Films/popular");
         } else {
             this.setTitle("Films/Most rated");
@@ -61,10 +62,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPostResume() {
-        ViewGroup vg = (ViewGroup) findViewById (R.id.tmdbcontainer);
-        vg.invalidate();
-        super.onPostResume();
+    protected void onResume() {
+        super.onResume();
+        //pega a preferencia de ordem da listagem (mais votados x popular)
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String orderList = prefs.getString(getString(R.string.pref_initial_key), getString(R.string.pref_initial_popular));
+
+        if (orderList.equals("popular")) {
+            this.setTitle("Films/popular");
+        } else {
+            this.setTitle("Films/Most rated");
+        }
+
     }
 
     @Override

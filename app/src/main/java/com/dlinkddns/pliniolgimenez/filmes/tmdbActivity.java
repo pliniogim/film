@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 
 import com.squareup.picasso.Picasso;
@@ -162,8 +163,7 @@ public class tmdbActivity extends AppCompatActivity {
             super.onStart();
             //cria adaptador
             setAdapter();
-            //grava arquivos
-            //fileOutput();
+
         }
 
         //ONRESUME
@@ -172,7 +172,14 @@ public class tmdbActivity extends AppCompatActivity {
             super.onResume();
             //cria adaptador
             setAdapter();
-            //    fileOutput();
+            //setVisibilityOrder();
+        }
+
+        private void setVisibilityOrder() {
+            for (int i = 100; i < 100 + RESPONSE_TOTAL; i++) {
+                FrameLayout frameLayout = (FrameLayout) rootView.findViewById(i + 100);
+                //textView.setVisibility(View.VISIBLE);
+            }
         }
 
 
@@ -199,6 +206,7 @@ public class tmdbActivity extends AppCompatActivity {
                     //seta o adaptador
                     gridview.setFocusable(true);
                     gridview.setAdapter(new ImageAdapter(getActivity(), filmThumbnailUrl));
+                    setVisibilityOrder();
                     setAdapterListener();
                 } else {
                     updateTMDB(orderList);
@@ -208,6 +216,7 @@ public class tmdbActivity extends AppCompatActivity {
                 updateTMDB(orderList);
             }
         }
+
 
         //listener do adaptador
         private void setAdapterListener() {

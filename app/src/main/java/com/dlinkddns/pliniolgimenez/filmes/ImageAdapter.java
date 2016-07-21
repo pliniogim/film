@@ -55,8 +55,11 @@ class ImageAdapter extends BaseAdapter {
     // cria um novo imageview para cada item do adapterview
     public View getView(int position, View convertView, ViewGroup parent) {
         FrameLayout view = new FrameLayout(mContext);
+        view.setId(position + 100);
         ImageView imageView = new ImageView(mContext);
         TextView textView = new TextView(mContext);
+        textView.setId(position + 100);
+        textView.setVisibility(View.INVISIBLE);
 
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         imageView.setPadding(2, 0, 2, 0);
