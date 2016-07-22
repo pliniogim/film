@@ -25,11 +25,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
+import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -42,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
         //inicializa vista
         setContentView(R.layout.coordinator_activity_main);
+
+
         //pega a preferencia de ordem da listagem (mais votados x popular)
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String orderList = prefs.getString(getString(R.string.pref_initial_key), getString(R.string.pref_initial_popular));
@@ -60,11 +63,38 @@ public class MainActivity extends AppCompatActivity {
                     .add(R.id.tmdbcontainer, new tmdbActivity.tmdbFragment())
                     .commit();
         }
+
+
     }
+
 
     @Override
     protected void onResume() {
         super.onResume();
+        
+        FloatingActionButton fbutton1 = (FloatingActionButton) findViewById(R.id.fab);
+
+        fbutton1.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(getApplicationContext(), "lgbtn1 pressed", Toast.LENGTH_SHORT).show();
+                // TODO Auto-generated method stub
+
+                return true;
+            }
+        });
+
+        FloatingActionButton fbutton2 = (FloatingActionButton) findViewById(R.id.fab2);
+
+        fbutton2.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(getApplicationContext(), "lgbtn2 pressed", Toast.LENGTH_SHORT).show();
+                // TODO Auto-generated method stub
+                return true;
+            }
+        });
+
         //pega a preferencia de ordem da listagem (mais votados x popular)
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String orderList = prefs.getString(getString(R.string.pref_initial_key), getString(R.string.pref_initial_popular));
@@ -76,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
