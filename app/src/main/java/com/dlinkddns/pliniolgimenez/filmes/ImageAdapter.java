@@ -3,6 +3,7 @@ package com.dlinkddns.pliniolgimenez.filmes;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -55,11 +56,8 @@ class ImageAdapter extends BaseAdapter {
     // cria um novo imageview para cada item do adapterview
     public View getView(int position, View convertView, ViewGroup parent) {
         FrameLayout view = new FrameLayout(mContext);
-        view.setId(position + 100);
         ImageView imageView = new ImageView(mContext);
         TextView textView = new TextView(mContext);
-        textView.setId(position + 100);
-        textView.setVisibility(View.INVISIBLE);
 
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         imageView.setPadding(2, 0, 2, 0);
@@ -79,13 +77,20 @@ class ImageAdapter extends BaseAdapter {
                 .error(R.drawable.samplea)
                 .into(imageView);
 
+        int fator = tmdbActivity.getPageNumber();
+        int itemPage = 1;
+        if (fator != 1) {
+            itemPage = fator * 10;
+        } else {
+            itemPage = 0;
+        }
 
-        textView.setText(String.valueOf(position + 1));
-        textView.setPadding(20, 20, 0, 0);
-        textView.setTextSize(40);
+        textView.setText(String.valueOf((itemPage + position) + 1));
+        textView.setGravity(Gravity.BOTTOM | Gravity.END);
+        textView.setPadding(0, 0, 20, 20);
+        textView.setTextSize(24);
         textView.setTextColor(Color.WHITE);
         textView.setShadowLayer(10, 0, 0, Color.BLACK);
-
         view.addView(imageView);
         view.addView(textView);
 

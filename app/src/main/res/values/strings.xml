@@ -31,6 +31,8 @@
     <string name="nbrvotes"># Votes:</string>
     <string name="avgvotes">"Avg: "</string>
     <string name="film_thumbnail">film thumbnail</string>
+    <string name="films_most_rated">Films/Most rated</string>
+    <string name="films_popular">Films/popular</string>
 
 
     <!-- Strings related to Settings -->

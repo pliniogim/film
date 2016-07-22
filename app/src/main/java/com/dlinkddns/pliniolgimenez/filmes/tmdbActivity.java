@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.FrameLayout;
 import android.widget.GridView;
 
 import com.squareup.picasso.Picasso;
@@ -43,7 +42,7 @@ import java.net.URL;
 public class tmdbActivity extends AppCompatActivity {
 
     //on save
-    final static String ARG_POSITION = "position";
+    private final static String ARG_POSITION = "position";
     /**
      * VARIAVEIS DE CLASSE
      */
@@ -51,11 +50,16 @@ public class tmdbActivity extends AppCompatActivity {
     //Total de respostas JSON - TODO mover para config
     private final static int RESPONSE_TOTAL = 20;
     private final static String thumbsUrl = "http://image.tmdb.org/t/p/w185";
+
+
     //booleano para controle de conteúdo http válido
     private static boolean valid_http_data = false;
     //booleano para controle de troca da ordem da lista
     private static String old_list_order = "";
 
+
+    //posição do foco do gridview
+    private static int viewFocus = 0;
 
     //variaveis decodificadas no JSON
     private static String[] filmThumbnailUrl = new String[RESPONSE_TOTAL];
@@ -66,14 +70,19 @@ public class tmdbActivity extends AppCompatActivity {
     private static String[] filmPopularity = new String[RESPONSE_TOTAL];
     private static String[] filmVotes = new String[RESPONSE_TOTAL];
     private static String[] filmVotesAvg = new String[RESPONSE_TOTAL];
+
+
+    private static int pageNumber = 1;
+    private static int totalNumberofPages;
+
     //view raiz
     private static View rootView;
     //gridview de referencia
     private static GridView gridview;
-    //posição do foco do gridview
-    private static int viewFocus = 0;
+
     //Adaptador gridview (classe ImageAdapter)
     private ImageAdapter mAdapter;
+
 
     /**
      * FIM VARIAVEIS
@@ -119,13 +128,44 @@ public class tmdbActivity extends AppCompatActivity {
         return filmVotesAvg[indice];
     }
 
+    static int getPageNumber() {
+        return pageNumber;
+    }
 
+    //metodos setter
+    public static void setPageNumber(int pageNumber) {
+        tmdbActivity.pageNumber = pageNumber;
+    }
+
+    public static int getViewFocus() {
+        return viewFocus;
+    }
+
+    public static void setViewFocus(int viewFocus) {
+        tmdbActivity.viewFocus = viewFocus;
+    }
+
+    static int getTotalNumberofPages() {
+        return totalNumberofPages;
+    }
+
+    public static void setTotalNumberofPages(int totalNumberofPages) {
+        tmdbActivity.totalNumberofPages = totalNumberofPages;
+    }
+
+    public static void setValid_http_data(boolean valid_http_data) {
+        tmdbActivity.valid_http_data = valid_http_data;
+    }
+
+    //END*****
+    //********
 
     public static class tmdbFragment extends Fragment {
 
         //construtor publico obrigatorio
         public tmdbFragment() {
         }
+
 
 
         //ONCREATEVIEW
@@ -172,14 +212,6 @@ public class tmdbActivity extends AppCompatActivity {
             super.onResume();
             //cria adaptador
             setAdapter();
-            //setVisibilityOrder();
-        }
-
-        private void setVisibilityOrder() {
-            for (int i = 100; i < 100 + RESPONSE_TOTAL; i++) {
-                FrameLayout frameLayout = (FrameLayout) rootView.findViewById(i + 100);
-                //textView.setVisibility(View.VISIBLE);
-            }
         }
 
 
@@ -187,7 +219,6 @@ public class tmdbActivity extends AppCompatActivity {
          * INICIO ROTINAS
          * DE APOIO
          */
-
 
         //seta adaptador de imagens
         public void setAdapter() {
@@ -206,7 +237,6 @@ public class tmdbActivity extends AppCompatActivity {
                     //seta o adaptador
                     gridview.setFocusable(true);
                     gridview.setAdapter(new ImageAdapter(getActivity(), filmThumbnailUrl));
-                    setVisibilityOrder();
                     setAdapterListener();
                 } else {
                     updateTMDB(orderList);
@@ -217,6 +247,9 @@ public class tmdbActivity extends AppCompatActivity {
             }
         }
 
+        public void refresh() {
+            updateTMDB(old_list_order);
+        }
 
         //listener do adaptador
         private void setAdapterListener() {
@@ -275,7 +308,7 @@ public class tmdbActivity extends AppCompatActivity {
             }
         }
 
-        private void updateTMDB(String orderList) {
+        void updateTMDB(String orderList) {
             FetchTMDB TMDBTask = new FetchTMDB();
             TMDBTask.execute(orderList);
         }
@@ -286,7 +319,7 @@ public class tmdbActivity extends AppCompatActivity {
 
             @Override
             protected String[] doInBackground(String... params) {
-                Log.i(LOG_TAG, "Dentro da rotina doInBackground");
+                //Log.i(LOG_TAG, "Dentro da rotina doInBackground");
 
                 // Checa se existe parâmetro recebido
                 if (params.length == 0) {
@@ -314,6 +347,7 @@ public class tmdbActivity extends AppCompatActivity {
                     final String TMDBurlApiPopular = "https://api.themoviedb.org/3/movie/popular?";
                     final String TMDBurlApiTopRated = "https://api.themoviedb.org/3/movie/top_rated?";
                     final String APPID_PARAM = "api_key";
+                    final String TMDBPage = "page";
 
                     //ordem da lista (popular ou rated)
                     String baseUrl;
@@ -326,6 +360,7 @@ public class tmdbActivity extends AppCompatActivity {
                     //cria a URL
                     Uri builtUri = Uri.parse(baseUrl).buildUpon()
                             .appendQueryParameter(APPID_PARAM, BuildConfig.TMDB_API_KEY)
+                            .appendQueryParameter(TMDBPage, Integer.toString(pageNumber))
                             .build();
 
                     URL url = new URL(builtUri.toString());
@@ -375,7 +410,7 @@ public class tmdbActivity extends AppCompatActivity {
                 }
 
                 try {
-                    Log.d(LOG_TAG, tmdb_json_str);
+                    //Log.d(LOG_TAG, tmdb_json_str);
                     return getTMDBDataFromJson(tmdb_json_str);
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, e.getMessage(), e);
@@ -394,6 +429,8 @@ public class tmdbActivity extends AppCompatActivity {
                     gridview.setFocusable(true);
                     gridview.setSelection(viewFocus);
                     gridview.setAdapter(new ImageAdapter(getActivity(), strings));
+                    //Log.i(LOG_TAG, "#PAGE: " + pageNumber + " #TOTAL: " + totalNumberofPages);
+
                     setAdapterListener();
 
                     //fileOutput();
@@ -403,7 +440,7 @@ public class tmdbActivity extends AppCompatActivity {
             //decodifica a string JSON
             private String[] getTMDBDataFromJson(String params) throws JSONException {
 
-                Log.i(LOG_TAG, "Dentro da rotina getTMDBDataFromJson");
+                //Log.i(LOG_TAG, "Dentro da rotina getTMDBDataFromJson");
 
                 // nomes para decode JSON
                 final String TMDB_RESULT = "results";
@@ -415,43 +452,28 @@ public class tmdbActivity extends AppCompatActivity {
                 final String TMDB_POPULARITY = "popularity";
                 final String TMDB_VOTES = "vote_count";
                 final String TMDB_VOTESAVG = "vote_average";
+                final String TMDB_NUMBEROFPAGES = "total_pages";
+                final String TMDB_PAGE = "page";
 
 
                 //pega a lista de resultados e coloca em um array
                 JSONObject tmdb_json = new JSONObject(params);
                 JSONArray filmsArray = tmdb_json.getJSONArray(TMDB_RESULT);
 
-                String poster_path;
-                String title;
-                String overview;
-                String releaseDate;
-                String adult;
-                String popularity;
-                String votes;
-                String votesAvg;
-
+                pageNumber = tmdb_json.getInt(TMDB_PAGE);
+                totalNumberofPages = tmdb_json.getInt(TMDB_NUMBEROFPAGES);
 
                 for (int i = 0; i < filmsArray.length(); i++) {
                     JSONObject films = filmsArray.getJSONObject(i);
-
-                    poster_path = films.getString(TMDB_POSTER_PATH);
-                    title = films.getString(TMDB_TITLE);
-                    overview = films.getString(TMDB_OVERVIEW);
-                    releaseDate = films.getString(TMDB_RELEASEDATE);
-                    adult = films.getString(TMDB_ADULT);
-                    popularity = films.getString(TMDB_POPULARITY);
-                    votes = films.getString(TMDB_VOTES);
-                    votesAvg = films.getString(TMDB_VOTESAVG);
-
                     //para acesso pelas outras classes
-                    filmTitle[i] = title;
-                    filmThumbnailUrl[i] = poster_path;
-                    filmOverview[i] = overview;
-                    filmReleaseDate[i] = releaseDate;
-                    filmAdult[i] = adult;
-                    filmPopularity[i] = popularity;
-                    filmVotes[i] = votes;
-                    filmVotesAvg[i] = votesAvg;
+                    filmTitle[i] = films.getString(TMDB_TITLE);
+                    filmThumbnailUrl[i] = films.getString(TMDB_POSTER_PATH);
+                    filmOverview[i] = films.getString(TMDB_OVERVIEW);
+                    filmReleaseDate[i] = films.getString(TMDB_RELEASEDATE);
+                    filmAdult[i] = films.getString(TMDB_ADULT);
+                    filmPopularity[i] = films.getString(TMDB_POPULARITY);
+                    filmVotes[i] = films.getString(TMDB_VOTES);
+                    filmVotesAvg[i] = films.getString(TMDB_VOTESAVG);
                 }
                 return filmThumbnailUrl;
             }

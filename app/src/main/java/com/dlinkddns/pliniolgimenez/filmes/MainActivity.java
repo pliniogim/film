@@ -28,20 +28,20 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
+import android.view.View;
+
 
 
 public class MainActivity extends AppCompatActivity {
 
     //private final String LOG_TAG = MainActivity.class.getSimpleName();
-    FrameLayout frameLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         //inicializa vista
-        setContentView(R.layout.framelayout_activity_main);
+        setContentView(R.layout.coordinator_activity_main);
         //pega a preferencia de ordem da listagem (mais votados x popular)
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String orderList = prefs.getString(getString(R.string.pref_initial_key), getString(R.string.pref_initial_popular));
@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (savedInstanceState == null) {
+
             //inicializa fragment
             getSupportFragmentManager()
                     .beginTransaction()
@@ -68,10 +69,10 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String orderList = prefs.getString(getString(R.string.pref_initial_key), getString(R.string.pref_initial_popular));
 
-        if (orderList.equals("popular")) {
-            this.setTitle("Films/popular");
+        if (orderList.equals(getString(R.string.popular))) {
+            this.setTitle(getString(R.string.films_popular));
         } else {
-            this.setTitle("Films/Most rated");
+            this.setTitle(getString(R.string.films_most_rated));
         }
 
     }
@@ -97,5 +98,34 @@ public class MainActivity extends AppCompatActivity {
 
         //return para supermetodo
         return true;
+    }
+
+    //metodo de paginacao dos filmes
+    public void tmdbNextPage(View view) {
+        if (tmdbActivity.getPageNumber() < tmdbActivity.getTotalNumberofPages()) {
+            tmdbActivity.setPageNumber(tmdbActivity.getPageNumber() + 1);
+            tmdbActivity.setValid_http_data(false);
+            tmdbActivity.setViewFocus(0);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.tmdbcontainer, new tmdbActivity.tmdbFragment())
+                    .commit();
+        }
+    }
+
+    //metodo de paginacao dos filmes
+    public void tmdbPreviousPage(View view) {
+        if (tmdbActivity.getPageNumber() < tmdbActivity.getTotalNumberofPages()) {
+            int page = tmdbActivity.getPageNumber();
+            if (page > 1) {
+                tmdbActivity.setPageNumber(page - 1);
+                tmdbActivity.setValid_http_data(false);
+                tmdbActivity.setViewFocus(0);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.tmdbcontainer, new tmdbActivity.tmdbFragment())
+                        .commit();
+            }
+        }
     }
 }
